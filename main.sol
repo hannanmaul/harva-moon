@@ -30,3 +30,19 @@ contract LunarHarvaCatalyst {
     uint256 private constant BP_DENOM = 10_000;
 
     bool public trajectoryCommitted;
+    uint256 public ignitionBurnAmount;
+
+    enum LaunchPhase { PreIgnition, TrajectoryLock, FuelAllocated, Live }
+    LaunchPhase public currentPhase;
+
+    struct MissionLogEntry {
+        uint256 blockNumber;
+        uint256 value;
+        bytes32 tag;
+    }
+    MissionLogEntry[] private _missionLog;
+    uint256 public constant MAX_MISSION_LOG_ENTRIES = 1992;
+
+    mapping(address => uint256) public transferCountByAddress;
+    uint256 public totalTransfers;
+
