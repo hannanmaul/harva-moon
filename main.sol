@@ -222,3 +222,19 @@ contract LunarHarvaCatalyst {
         if (balanceOf[from] < amount) revert Catalyst_InsufficientBalance();
 
         balanceOf[from] -= amount;
+        balanceOf[to] += amount;
+        totalTransfers += 1;
+        transferCountByAddress[from] += 1;
+        transferCountByAddress[to] += 1;
+        emit Transfer(from, to, amount);
+    }
+
+    function missionLogLength() external view returns (uint256) {
+        return _missionLog.length;
+    }
+
+    function getMissionLogEntry(uint256 index) external view returns (uint256 blockNumber, uint256 value, bytes32 tag) {
+        if (index >= _missionLog.length) revert Catalyst_IndexOutOfBounds();
+        MissionLogEntry storage e = _missionLog[index];
+        return (e.blockNumber, e.value, e.tag);
+    }
