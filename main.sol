@@ -126,3 +126,19 @@ contract LunarHarvaCatalyst {
             emit Transfer(authority, liquidityReserve, toReserve);
             emit FuelAllocated(liquidityReserve, toReserve);
         }
+        if (toTreasury > 0 && treasury != address(0)) {
+            balanceOf[authority] -= toTreasury;
+            balanceOf[treasury] += toTreasury;
+            emit Transfer(authority, treasury, toTreasury);
+        }
+        currentPhase = LaunchPhase.FuelAllocated;
+        emit TrajectoryCommitted(block.number, toReserve, toTreasury);
+    }
+
+    /// @notice Append a mission log entry (authority only). Tag can be keccak256 of a label.
+    function logMission(uint256 value, bytes32 tag) external onlyAuthority {
+        if (_missionLog.length >= MAX_MISSION_LOG_ENTRIES) revert Catalyst_MissionLogFull();
+        _missionLog.push(MissionLogEntry({ blockNumber: block.number, value: value, tag: tag }));
+        emit MissionLogged(_missionLog.length - 1, block.number, value, tag);
+    }
+
