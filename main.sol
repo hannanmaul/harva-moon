@@ -62,3 +62,19 @@ contract LunarHarvaCatalyst {
     error Catalyst_ZeroAmount();
     error Catalyst_InvalidAllocation();
     error Catalyst_MissionLogFull();
+    error Catalyst_VestingNotStarted();
+    error Catalyst_CliffNotReached();
+    error Catalyst_NothingToClaim();
+    error Catalyst_InvalidTag();
+    error Catalyst_IndexOutOfBounds();
+
+    // ─── Events (unique naming) ──────────────────────────────────────────────────
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event TrajectoryCommitted(uint256 atBlock, uint256 liquidityAllocation, uint256 treasuryAllocation);
+    event IgnitionBurnExecuted(address indexed from, uint256 amount);
+    event FuelAllocated(address indexed reserve, uint256 amount);
+    event MissionLogged(uint256 indexed index, uint256 blockNumber, uint256 value, bytes32 tag);
+    event VestingScheduled(address indexed beneficiary, uint256 amount);
+    event VestingClaimed(address indexed beneficiary, uint256 amount);
+
