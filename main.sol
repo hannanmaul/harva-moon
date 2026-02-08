@@ -190,3 +190,19 @@ contract LunarHarvaCatalyst {
         address target = burnVault != address(0) ? burnVault : address(0x000000000000000000000000000000000000dEaD);
         balanceOf[authority] -= amount;
         balanceOf[target] += amount;
+        ignitionBurnAmount += amount;
+        emit Transfer(authority, target, amount);
+        emit IgnitionBurnExecuted(authority, amount);
+    }
+
+    function transfer(address to, uint256 amount) external returns (bool) {
+        _move(msg.sender, to, amount);
+        return true;
+    }
+
+    function approve(address spender, uint256 amount) external returns (bool) {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+        return true;
+    }
+
