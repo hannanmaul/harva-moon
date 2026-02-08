@@ -94,3 +94,19 @@ contract LunarHarvaCatalyst {
 
         totalSupply = supplyCap;
         balanceOf[authority] = supplyCap;
+        emit Transfer(address(0), authority, supplyCap);
+    }
+
+    modifier onlyAuthority() {
+        if (msg.sender != authority) revert Catalyst_Unauthorized();
+        _;
+    }
+
+    modifier afterLaunchUnlock() {
+        if (block.number < launchUnlockBlock) revert Catalyst_LaunchWindowNotReached();
+        _;
+    }
+
+    /// @notice Commit launch trajectory: allocate fuel to liquidity reserve and treasury from authority balance.
+    function commitTrajectory() external onlyAuthority {
+        if (trajectoryCommitted) revert Catalyst_TrajectoryAlreadyCommitted();
