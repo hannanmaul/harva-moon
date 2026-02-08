@@ -110,3 +110,19 @@ contract LunarHarvaCatalyst {
     /// @notice Commit launch trajectory: allocate fuel to liquidity reserve and treasury from authority balance.
     function commitTrajectory() external onlyAuthority {
         if (trajectoryCommitted) revert Catalyst_TrajectoryAlreadyCommitted();
+
+        uint256 allocatable = balanceOf[authority];
+        if (allocatable == 0) revert Catalyst_ZeroAmount();
+
+        uint256 toReserve = (allocatable * FUEL_ALLOCATION_BP) / BP_DENOM;
+        uint256 toTreasury = (allocatable * TREASURY_BP) / BP_DENOM;
+        if (toReserve + toTreasury > allocatable) revert Catalyst_InvalidAllocation();
+
+        trajectoryCommitted = true;
+
+        if (toReserve > 0 && liquidityReserve != address(0)) {
+            balanceOf[authority] -= toReserve;
+            balanceOf[liquidityReserve] += toReserve;
+            emit Transfer(authority, liquidityReserve, toReserve);
+            emit FuelAllocated(liquidityReserve, toReserve);
+        }
