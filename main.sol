@@ -142,3 +142,19 @@ contract LunarHarvaCatalyst {
         emit MissionLogged(_missionLog.length - 1, block.number, value, tag);
     }
 
+    /// @notice Schedule vesting for a beneficiary from authority balance. Callable only before trajectory commit.
+    ///         Tokens are escrowed in this contract until claimed.
+    function scheduleVesting(address beneficiary, uint256 amount) external onlyAuthority {
+        if (trajectoryCommitted) revert Catalyst_TrajectoryAlreadyCommitted();
+        if (beneficiary == address(0)) revert Catalyst_InvalidRecipient();
+        if (amount == 0) revert Catalyst_ZeroAmount();
+        if (balanceOf[authority] < amount) revert Catalyst_InsufficientBalance();
+
+        balanceOf[authority] -= amount;
+        balanceOf[address(this)] += amount;
+        vestedAmount[beneficiary] += amount;
+        emit Transfer(authority, address(this), amount);
+        emit VestingScheduled(beneficiary, amount);
+    }
+
+    /// @notice Claim vested tokens after cliff. Linear vest over 7776 blocks from vestingStartBlock + cliff.
