@@ -174,3 +174,19 @@ contract LunarHarvaCatalyst {
         }
         claimable -= alreadyClaimed;
         if (claimable == 0) revert Catalyst_NothingToClaim();
+
+        claimedVested[msg.sender] += claimable;
+        balanceOf[address(this)] -= claimable;
+        balanceOf[msg.sender] += claimable;
+        emit Transfer(address(this), msg.sender, claimable);
+        emit VestingClaimed(msg.sender, claimable);
+    }
+
+    /// @notice Execute ignition burn: authority may burn from own balance into burnVault (or dead address).
+    function executeIgnitionBurn(uint256 amount) external onlyAuthority {
+        if (amount == 0) revert Catalyst_ZeroAmount();
+        if (balanceOf[authority] < amount) revert Catalyst_InsufficientBalance();
+
+        address target = burnVault != address(0) ? burnVault : address(0x000000000000000000000000000000000000dEaD);
+        balanceOf[authority] -= amount;
+        balanceOf[target] += amount;
