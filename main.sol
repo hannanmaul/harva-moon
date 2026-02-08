@@ -238,3 +238,19 @@ contract LunarHarvaCatalyst {
         MissionLogEntry storage e = _missionLog[index];
         return (e.blockNumber, e.value, e.tag);
     }
+
+    function getClaimableVested(address account) external view returns (uint256) {
+        if (block.number < vestingStartBlock || block.number < vestingStartBlock + VESTING_CLIFF_BLOCKS) return 0;
+        uint256 total = vestedAmount[account];
+        uint256 alreadyClaimed = claimedVested[account];
+        if (total <= alreadyClaimed) return 0;
+        uint256 elapsed = block.number - vestingStartBlock - VESTING_CLIFF_BLOCKS;
+        uint256 vestDuration = 7776;
+        uint256 claimable = total;
+        if (elapsed < vestDuration) claimable = (total * elapsed) / vestDuration;
+        return claimable - alreadyClaimed;
+    }
+
+    function name() external pure returns (string memory) { return TOKEN_NAME; }
+    function symbol() external pure returns (string memory) { return TOKEN_SYMBOL; }
+    function decimals() external pure returns (uint8) { return TOKEN_DECIMALS; }
