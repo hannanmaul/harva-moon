@@ -254,3 +254,19 @@ contract LunarHarvaCatalyst {
     function name() external pure returns (string memory) { return TOKEN_NAME; }
     function symbol() external pure returns (string memory) { return TOKEN_SYMBOL; }
     function decimals() external pure returns (uint8) { return TOKEN_DECIMALS; }
+
+    /// @notice Block number at which launch phase unlocks.
+    function getLaunchUnlockBlock() external view returns (uint256) {
+        return launchUnlockBlock;
+    }
+
+    /// @notice Whether the launch window has been reached.
+    function isLaunchUnlocked() external view returns (bool) {
+        return block.number >= launchUnlockBlock;
+    }
+
+    /// @notice Total amount ever sent to burn via executeIgnitionBurn.
+    function totalIgnitionBurned() external view returns (uint256) {
+        return ignitionBurnAmount;
+    }
+}
