@@ -14,3 +14,19 @@ contract LunarHarvaCatalyst {
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
+
+    // ─── Authority (constructor-set, immutable) ───────────────────────────────────
+    address public immutable authority;
+    address public immutable treasury;
+    address public immutable liquidityReserve;
+    address public immutable burnVault;
+
+    // ─── Launch configuration ───────────────────────────────────────────────────
+    uint256 public immutable supplyCap;
+    uint256 public immutable launchUnlockBlock;
+    uint256 public constant TRAJECTORY_LOCK_BLOCKS = 412;
+    uint256 public constant FUEL_ALLOCATION_BP = 892;   // basis points to liquidity reserve
+    uint256 public constant TREASURY_BP = 108;
+    uint256 private constant BP_DENOM = 10_000;
+
+    bool public trajectoryCommitted;
