@@ -158,3 +158,19 @@ contract LunarHarvaCatalyst {
     }
 
     /// @notice Claim vested tokens after cliff. Linear vest over 7776 blocks from vestingStartBlock + cliff.
+    function claimVested() external {
+        if (block.number < vestingStartBlock) revert Catalyst_VestingNotStarted();
+        if (block.number < vestingStartBlock + VESTING_CLIFF_BLOCKS) revert Catalyst_CliffNotReached();
+
+        uint256 total = vestedAmount[msg.sender];
+        uint256 alreadyClaimed = claimedVested[msg.sender];
+        if (total <= alreadyClaimed) revert Catalyst_NothingToClaim();
+
+        uint256 elapsed = block.number - vestingStartBlock - VESTING_CLIFF_BLOCKS;
+        uint256 vestDuration = 7776;
+        uint256 claimable = total;
+        if (elapsed < vestDuration) {
+            claimable = (total * elapsed) / vestDuration;
+        }
+        claimable -= alreadyClaimed;
+        if (claimable == 0) revert Catalyst_NothingToClaim();
