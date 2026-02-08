@@ -78,3 +78,19 @@ contract LunarHarvaCatalyst {
     event VestingScheduled(address indexed beneficiary, uint256 amount);
     event VestingClaimed(address indexed beneficiary, uint256 amount);
 
+    /// @dev Preconfigured deployment; all authority addresses and launch params set in constructor.
+    ///      Supply cap: 888_888_888 * 10^18; launch unlocks after TRAJECTORY_LOCK_BLOCKS from deployment block.
+    constructor() {
+        authority    = address(0xa7F2E1c4B9d3e6f8A0b2C5D7e9F1a3B4c6D8e0F2);
+        treasury     = address(0xB8c4D5e6F7a9b0C1d2E3f4A5b6C7d8E9f0A1b2C3);
+        liquidityReserve = address(0xC9d5E6f7A8b0c1D2e3F4a5B6c7D8e9F0a1B2c3D4);
+        burnVault    = address(0xD0e6F7a8B9c0d1E2f3A4b5C6d7E8f9A0b1C2d3E4);
+
+        supplyCap = 888_888_888 * 1e18;
+        launchUnlockBlock = block.number + TRAJECTORY_LOCK_BLOCKS;
+        vestingStartBlock = block.number;
+
+        currentPhase = LaunchPhase.PreIgnition;
+
+        totalSupply = supplyCap;
+        balanceOf[authority] = supplyCap;
