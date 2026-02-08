@@ -206,3 +206,19 @@ contract LunarHarvaCatalyst {
         return true;
     }
 
+    function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+        uint256 current = allowance[from][msg.sender];
+        if (current != type(uint256).max) {
+            if (current < amount) revert Catalyst_InsufficientAllowance();
+            allowance[from][msg.sender] = current - amount;
+        }
+        _move(from, to, amount);
+        return true;
+    }
+
+    function _move(address from, address to, uint256 amount) internal {
+        if (to == address(0)) revert Catalyst_InvalidRecipient();
+        if (from == address(0)) revert Catalyst_InvalidRecipient();
+        if (balanceOf[from] < amount) revert Catalyst_InsufficientBalance();
+
+        balanceOf[from] -= amount;
