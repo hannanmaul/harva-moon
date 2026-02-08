@@ -46,3 +46,19 @@ contract LunarHarvaCatalyst {
     mapping(address => uint256) public transferCountByAddress;
     uint256 public totalTransfers;
 
+    uint256 public constant VESTING_CLIFF_BLOCKS = 720;
+    uint256 public vestingStartBlock;
+    mapping(address => uint256) public vestedAmount;
+    mapping(address => uint256) public claimedVested;
+
+    // ─── Custom errors (unique to this contract) ──────────────────────────────────
+    error Catalyst_InvalidRecipient();
+    error Catalyst_InsufficientBalance();
+    error Catalyst_InsufficientAllowance();
+    error Catalyst_ExceedsCap();
+    error Catalyst_Unauthorized();
+    error Catalyst_TrajectoryAlreadyCommitted();
+    error Catalyst_LaunchWindowNotReached();
+    error Catalyst_ZeroAmount();
+    error Catalyst_InvalidAllocation();
+    error Catalyst_MissionLogFull();
