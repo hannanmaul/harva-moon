@@ -270,3 +270,4 @@ contract LunarHarvaCatalyst {
         return ignitionBurnAmount;
     }
 }
+
